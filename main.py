@@ -4,14 +4,16 @@
 import handler
 from flask import Flask, request, jsonify
 from classes import Response
+from utils import log_execution
 
 app = Flask(__name__)
 
-def service_manager(flow_handler):
+@log_execution
+def service_manager(endpoint_handler):
     response = Response()
     try:
         data = request.get_json()
-        flow_handler(response, data)
+        endpoint_handler(response, data)
     except AttributeError as error:
         response.status_code = 400
         response.error = str(error)
@@ -29,7 +31,7 @@ def service_manager(flow_handler):
     "username": "test",
     "email": "test@gmail.com",
     "password": "12345678",
-    "multi_factor": false
+    "multi_factor": 1
 }
 '''
 @app.route('/register/', methods=['POST'])
@@ -54,9 +56,9 @@ def access():
     "token": "123456"
 }
 '''
-@app.route('/token_login/', methods=['POST'])
-def token_login():
-    return service_manager(handler.token_login_handler)
+@app.route('/multi_factor/', methods=['POST'])
+def multi_factor():
+    return service_manager(handler.multi_factor_handler)
 
 
 if __name__ == '__main__':

@@ -1,11 +1,13 @@
 import utils
 import dbengine
+from flask import session
 from classes import User, Response
 
 INVALID_REQ = 'Client sent an invalid request.'
 LOGIN_OK = 'Successful login.'
 NEW_TOKEN = 'A new token has been generated.'
 
+@utils.log_execution
 def register_handler(response: Response, data: dict):
     if(data and {'username', 'email', 'password', 'multi_factor'} <= data.keys()):
         new_user = User()
@@ -22,16 +24,16 @@ def register_handler(response: Response, data: dict):
     else:
         raise AttributeError(INVALID_REQ)
 
+@utils.log_execution
 def access_handler(response: Response, data: dict):
     def _basic_login(response: Response, user: User, password_to_verify: str):
-        if not utils.verify_password(user.password, password_to_verify):
-            raise ValueError('Wrong password.')
+        utils.verify_password(user.password, password_to_verify)
+        session[user.username] = True
         response.status_code = 200
         response.body['message'] = LOGIN_OK
 
-    def _multi_factor_login(response: Response, user: User, password_to_verify: str):
-        if not utils.verify_password(user.password, password_to_verify):
-            raise ValueError('Wrong password.')
+    def _generate_token(response: Response, user: User, password_to_verify: str):
+        utils.verify_password(user.password, password_to_verify)
         utils.refresh_token(user)
         # sent email with new token
         response.status_code = 200
@@ -45,16 +47,20 @@ def access_handler(response: Response, data: dict):
         if not user.multi_factor:
             _basic_login(response, user, data['password'])
         else:
-            _multi_factor_login(response, user, data['password'])            
+            _generate_token(response, user, data['password'])
     else:
         raise AttributeError(INVALID_REQ)
 
-def token_login_handler(response: Response, data: dict):
+@utils.log_execution
+def multi_factor_handler(response: Response, data: dict):
     if(data and {'username', 'token'} <= data.keys()):
         user = User()
         raw_user = utils.retrieve_user(data['username'])
         user.load(*raw_user)
+        if not user.multi_factor:
+            raise ValueError('For this user multi_factor is not enabled.')
         utils.verify_token(user.auth_token, user.token_exp_date, data['token'])
+        session[user.username] = True
         response.status_code = 200
         response.body['message'] = LOGIN_OK
     else:
