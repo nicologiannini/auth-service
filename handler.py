@@ -3,9 +3,10 @@ import dbengine
 from flask import session
 from classes import User, Response
 
-INVALID_REQ = 'Client sent an invalid request.'
-LOGIN_OK = 'Successful login.'
-NEW_TOKEN = 'A new token has been generated.'
+INVALID_REQ = 'Client sent an invalid request'
+LOGIN_OK = 'Successful login'
+NEW_TOKEN = 'A new token has been generated'
+NOT_ALLOWED = 'Method not allowed'
 
 @utils.log_execution
 def register_handler(response: Response, data: dict):
@@ -18,14 +19,14 @@ def register_handler(response: Response, data: dict):
             data['multi_factor'])
         if dbengine.insert_user(new_user):
             response.status_code = 200
-            response.body['message'] = f'{new_user.username} has been created.'
+            response.body['message'] = f'{new_user.username} has been created'
         else:
             raise Exception
     else:
         raise AttributeError(INVALID_REQ)
 
 @utils.log_execution
-def access_handler(response: Response, data: dict):
+def login_handler(response: Response, data: dict):
     def _basic_login(response: Response, user: User, password_to_verify: str):
         utils.verify_password(user.password, password_to_verify)
         session[user.username] = True
@@ -35,7 +36,7 @@ def access_handler(response: Response, data: dict):
     def _generate_token(response: Response, user: User, password_to_verify: str):
         utils.verify_password(user.password, password_to_verify)
         utils.refresh_token(user)
-        # sent email with new token
+        utils.send_token_mail(user.email, user.auth_token)
         response.status_code = 200
         response.body['message'] = NEW_TOKEN
         response.body['token'] = user.auth_token
@@ -58,7 +59,7 @@ def multi_factor_handler(response: Response, data: dict):
         raw_user = utils.retrieve_user(data['username'])
         user.load(*raw_user)
         if not user.multi_factor:
-            raise ValueError('For this user multi_factor is not enabled.')
+            raise ValueError(NOT_ALLOWED)
         utils.verify_token(user.auth_token, user.token_exp_date, data['token'])
         session[user.username] = True
         response.status_code = 200
