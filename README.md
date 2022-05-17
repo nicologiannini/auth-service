@@ -5,7 +5,7 @@ Once you have imported the docker image, you need to set some environment variab
 \* in this case we can access the server from localhost:5000
 ### Endpoint
 * **/register/** <br/>
-```json
+```javascript
 {
     "username": "test", // 4-16 char
     "email": "test@gmail.com",
@@ -16,7 +16,7 @@ Once you have imported the docker image, you need to set some environment variab
 The registration flow of new users is managed from this route. Following the validation steps if all parameters are compliant a new record is saved in the database.
 <br/>
 * **/login/** <br/>
-```json
+```javascript
 {
     "username": "test", // 4-16 char
     "password": "12345678", // 8-16 char
@@ -27,7 +27,7 @@ From here you can log in for a specific user the password passed as a parameter 
 In case of multi_factor instead a token will be generated and sent to the user's email.
 <br/>
 * **/multi_factor/**<br/>
-```json
+```javascript
 {
     "username": "test", // 4-16 char
     "token": "000000", // 6-digit
