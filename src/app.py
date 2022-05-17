@@ -38,7 +38,7 @@ def service_manager(endpoint_handler):
     "username": "test",
     "email": "test@gmail.com",
     "password": "12345678",
-    "multi_factor": 1
+    "multi_factor": true
 }
 '''
 @app.route('/register/', methods=['POST'])
