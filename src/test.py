@@ -1,10 +1,8 @@
 import unittest
-from dbengine import get_user_by_username
 import utils
 import handler
 from mock import patch
-from app import app
-from classes import User, Response
+from classes import Response
 
 class TestValidations(unittest.TestCase):
     def test_validate_username(self):

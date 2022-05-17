@@ -2,15 +2,24 @@ import utils
 import sender
 import dbengine
 from flask import session
-from classes import User, Response 
+from classes import User, Response
 
-INVALID_REQ = 'Client sent an invalid request'
-LOGIN_OK = 'Successful login'
-NEW_TOKEN = 'A new token has been generated'
-NOT_ALLOWED = 'Method not allowed'
+INVALID_REQ = 'Client sent an invalid request.'
+LOGIN_OK = 'Successful login.'
+NEW_TOKEN = 'A new token has been generated.'
+NOT_ALLOWED = 'Method not allowed.'
+
+'''
+NOTE: Each handler deals with a specific process and cascades all the 
+processing needed to complete it.
+
+TODO: Manage login attempts on already logged in users, there should be a /logout/
+to refresh session.
+'''
 
 @utils.log_execution
 def register_handler(response: Response, data: dict):
+    # Once the validations are passed and initialized the new user attempts to insert it into the db.
     if(data and {'username', 'email', 'password', 'multi_factor'} <= data.keys()):
         new_user = User()
         new_user.username = utils.validate_username(data['username'])
@@ -20,7 +29,7 @@ def register_handler(response: Response, data: dict):
             data['multi_factor'])
         if dbengine.insert_user(new_user):
             response.status_code = 200
-            response.body['message'] = f'{new_user.username} has been created'
+            response.body['message'] = f'{new_user.username} has been created.'
         else:
             raise Exception
     else:
@@ -28,6 +37,7 @@ def register_handler(response: Response, data: dict):
 
 @utils.log_execution
 def login_handler(response: Response, data: dict):
+    # Based on the type of authentication decides whether to attempt a direct login or go through token generation.
     def _basic_login(response: Response, user: User, password_to_verify: str):
         utils.verify_password(user.password, password_to_verify)
         session[user.username] = True
@@ -55,6 +65,7 @@ def login_handler(response: Response, data: dict):
 
 @utils.log_execution
 def multi_factor_handler(response: Response, data: dict):
+    # Manage the token verification step and if positive, log in.
     if(data and {'username', 'token'} <= data.keys()):
         user = User()
         raw_user = utils.retrieve_user(data['username'])

@@ -9,9 +9,14 @@ from classes import Response
 from utils import log_execution
 
 app = Flask(__name__)
-app.secret_key = os.environ['SECRET_KEY']
+app.secret_key = os.environ.get('SECRET_KEY')
 
-GENERIC_ERROR = 'A generic error occurred on the server'
+GENERIC_ERROR = 'A generic error occurred on the server.'
+
+'''
+NOTE: The service manager sorts the flow for all endpoints by calling the specific 
+process handler while catching all significant exceptions.
+'''
 
 @log_execution
 def service_manager(endpoint_handler):
@@ -65,4 +70,4 @@ def multi_factor():
 
 if __name__ == '__main__':
     database_init()
-    app.run(host = '0.0.0.0', port = 105)
+    app.run(host='0.0.0.0', port=105)
