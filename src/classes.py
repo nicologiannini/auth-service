@@ -78,3 +78,7 @@ class Response():
         self.status_code = None
         self.body = {}
         self.error = ''
+
+    def failed(self, status, error = ''):
+        self.status_code = status
+        self.error = error
