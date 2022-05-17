@@ -4,7 +4,6 @@ from utils import log_detail
 
 SERVER_MAIL = os.environ['SERVER_MAIL']
 SERVER_MAIL_PWD = os.environ['SERVER_MAIL_PWD']
-SERVER = ''
 
 def send_token_mail(receiver, token):
     port = 465

@@ -1,7 +1,8 @@
 import utils
+import sender
 import dbengine
 from flask import session
-from classes import User, Response
+from classes import User, Response 
 
 INVALID_REQ = 'Client sent an invalid request'
 LOGIN_OK = 'Successful login'
@@ -36,7 +37,7 @@ def login_handler(response: Response, data: dict):
     def _generate_token(response: Response, user: User, password_to_verify: str):
         utils.verify_password(user.password, password_to_verify)
         utils.refresh_token(user)
-        utils.send_token_mail(user.email, user.auth_token)
+        sender.send_token_mail(user.email, user.auth_token)
         response.status_code = 200
         response.body['message'] = NEW_TOKEN
         response.body['token'] = user.auth_token
