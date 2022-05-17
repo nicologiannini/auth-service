@@ -47,7 +47,3 @@ def get_user_by_email(email):
 
 def update_user_token_info(user: User):
     return execute_statement(f"UPDATE users SET auth_token = '{user.auth_token}', token_exp_date = '{user.token_exp_date}' WHERE username = '{user.username}'")
-
-
-if __name__ == '__main__':
-    create_users_table()
