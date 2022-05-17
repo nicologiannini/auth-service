@@ -2,8 +2,8 @@ import os
 import smtplib, ssl
 from utils import log_detail
 
-SERVER_MAIL = os.environ['SERVER_MAIL']
-SERVER_MAIL_PWD = os.environ['SERVER_MAIL_PWD']
+SERVER_MAIL = os.environ.get('SERVER_MAIL')
+SERVER_MAIL_PWD = os.environ.get('SERVER_MAIL_PWD')
 
 def send_token_mail(receiver, token):
     port = 465

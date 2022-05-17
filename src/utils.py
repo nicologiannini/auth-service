@@ -7,7 +7,7 @@ from flask_bcrypt import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from classes import User
 
-ENABLE_LOG = os.environ['ENABLE_LOG']
+ENABLE_LOG = os.environ.get('ENABLE_LOG')
 DT_FORMAT = '%d/%m/%Y %H:%M:%S'
 
 def validate_username(username):

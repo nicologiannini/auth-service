@@ -61,10 +61,13 @@ class TestProcessHandlers(unittest.TestCase):
     def test_login_handler(self):
         with patch('dbengine.get_user_by_username') as patched_a, \
                 patch('dbengine.update_user_token_info') as patched_b, \
+                patch('sender.send_token_mail') as patched_c, \
                 patch('handler.session', dict()) as session:
             user_sample = [-1, '', '', utils.generate_password_hash(
                 '00000000').decode('utf-8'), 0, '', '', '']
             patched_a.return_value = user_sample
+            patched_b.return_value = True
+            patched_c.return_value = True
             response_sample = Response()
             data_sample = {'username': 'test', 'password': '00000000'}
             self.assertEqual(handler.login_handler(
@@ -73,7 +76,6 @@ class TestProcessHandlers(unittest.TestCase):
             self.assertRaises(
                 AttributeError, handler.login_handler, response_sample, {})
             user_sample[4] = 1
-            patched_b.return_value = True
             self.assertEqual(handler.login_handler(
                 response_sample, data_sample), None)
             self.assertIsNotNone(response_sample.body['token'])
