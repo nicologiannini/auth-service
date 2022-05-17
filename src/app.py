@@ -11,6 +11,8 @@ from utils import log_execution
 app = Flask(__name__)
 app.secret_key = os.environ['SECRET_KEY']
 
+GENERIC_ERROR = 'A generic error occurred on the server'
+
 @log_execution
 def service_manager(endpoint_handler):
     response = Response()
@@ -18,14 +20,11 @@ def service_manager(endpoint_handler):
         data = request.get_json()
         endpoint_handler(response, data)
     except AttributeError as error:
-        response.status_code = 400
-        response.error = str(error)
+        response.failed(400, str(error))
     except ValueError as error:
-        response.status_code = 401
-        response.error = str(error)
+        response.failed(401, str(error))
     except Exception as e:
-        response.status_code = 500
-        response.error = 'A generic error occurred on the server'
+        response.failed(500, GENERIC_ERROR)
     return jsonify(response.__dict__), response.status_code
 
 
