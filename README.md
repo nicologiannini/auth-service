@@ -36,3 +36,8 @@ In case of multi_factor instead a token will be generated and sent to the user's
 }
 ```
  Endpoint for system access via token validation for multi-factor authentication. Access will be granted only in case of correct and non-expired token (5 minutes from generation).
+
+### Testing
+```bash
+pytest test.py
+```
