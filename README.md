@@ -26,7 +26,7 @@ From here you can log in for a specific user the password passed as a parameter 
 
 In case of multi_factor instead a token will be generated and sent to the user's email.
 <br/>
-* http://localhost:5000<span>**/multi_factor/**</span><br/>
+* <span>http://localhost:5000**/multi_factor/**</span><br/>
 ```json
 {
     "username": "test", // 4-16 char
