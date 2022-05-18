@@ -8,7 +8,7 @@ docker run -d -p 5000:5000 -e PYTHONUNBUFFERED=1 -e ENABLE_LOG=1 -e SECRET_KEY=1
 
 \* in this case we can access the server from localhost:5000
 ### Endpoint
-* **/register/**<br/><br/>
+**/register/**<br/>
 POST method that requires the following body:
 ```javascript
 {
@@ -20,25 +20,27 @@ POST method that requires the following body:
 ```
 The registration flow of new users is managed from this route. Following the validation steps if all parameters are compliant a new record is saved in the database.
 <br/>
-* **/login/**<br/>POST method that requires the following body:
+**/login/**<br/>
+POST method that requires the following body:
 ```javascript
 {
     "username": "test",
     "password": "12345678",
 }
 ```
-From here you can log in for a specific user the password passed as a parameter will be compared with the one saved during registration.
+From here you can log in for a specific username, the password passed as a parameter will be compared with the one saved during registration.
 
-In case of multi_factor instead a token will be generated and sent to the user's email.
+In case of multi_factor a token will be generated and sent to the user's email instead.
 <br/>
-* **/multi_factor/**<br/>POST method that requires the following body:
+**/multi_factor/**<br/>
+POST method that requires the following body:
 ```javascript
 {
     "username": "test",
     "token": "000000", // 6-digit
 }
 ```
- Endpoint for system access via token validation for multi-factor authentication. Access will be granted only in case of correct and non-expired token (5 minutes from generation).
+ Endpoint for system login via token validation for multi-factor authentication. Access will be granted only in case of correct and non-expired token (5 minutes from generation).
 
 ### Testing
 ```bash
