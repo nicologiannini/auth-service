@@ -1,4 +1,6 @@
 # basic-login-system
+A simple authentication system that supports registration, simple login and 2FA and sends e-mail when a token is generated.
+
 Once you have imported the docker image, you need to set some environment variables, i suggest to run this command: 
 ```bash
 docker run -d -p 5000:5000 -e PYTHONUNBUFFERED=1 -e ENABLE_LOG=1 -e SECRET_KEY=12345 -e SERVER_MAIL={your_gmail} -e SERVER_MAIL_PWD={your_gmail_password} basic-login-system
