@@ -8,7 +8,7 @@ docker run -d -p 5000:5000 -e PYTHONUNBUFFERED=1 -e ENABLE_LOG=1 -e SECRET_KEY=1
 
 \* in this case we can access the server from localhost:5000
 ### Endpoint
-* **/register/** <br/>
+* **/register/** [POST]<br/>
 ```javascript
 {
     "username": "test", // 4-16 char
@@ -19,7 +19,7 @@ docker run -d -p 5000:5000 -e PYTHONUNBUFFERED=1 -e ENABLE_LOG=1 -e SECRET_KEY=1
 ```
 The registration flow of new users is managed from this route. Following the validation steps if all parameters are compliant a new record is saved in the database.
 <br/>
-* **/login/** <br/>
+* **/login/** [POST]<br/>
 ```javascript
 {
     "username": "test",
@@ -30,7 +30,7 @@ From here you can log in for a specific user the password passed as a parameter 
 
 In case of multi_factor instead a token will be generated and sent to the user's email.
 <br/>
-* **/multi_factor/**<br/>
+* **/multi_factor/** [POST]<br/>
 ```javascript
 {
     "username": "test",
