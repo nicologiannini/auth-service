@@ -42,7 +42,7 @@ POST method that requires the following body:
 ```
  Endpoint for system login via token validation for multi-factor authentication. Access will be granted only in case of correct and non-expired token (5 minutes from generation).
 
-### Testing
+## Testing
 ```bash
 pytest test.py
 ```
