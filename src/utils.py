@@ -2,7 +2,6 @@ import os
 import dbengine
 import re
 import random
-import smtplib
 from flask_bcrypt import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from classes import User
@@ -65,14 +64,6 @@ def verify_token(last_token, last_token_exp_date, token_to_verify):
     if datetime.strptime(time_now(), DT_FORMAT) > last_token_exp_date:
         raise ValueError('This token is expired')
     return True
-
-def send_token_mail(receiver, token):
-    try:
-        sender = 'noreply@localhost.com'
-        smtp_obj = smtplib.SMTP('localhost')
-        smtp_obj.sendmail(sender, [receiver], f'Your token: {token}')
-    except Exception as e:
-        log_detail(f'Token: {token} not sent')
 
 def time_now() -> str:
     now = datetime.now()
