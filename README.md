@@ -19,7 +19,7 @@ POST method that requires the following body:
 }
 ```
 The registration flow of new users is managed from this route. Following the validation steps if all parameters are compliant a new record is saved in the database.
-<br/>
+<br/><br/>
 **/login/**<br/>
 POST method that requires the following body:
 ```javascript
@@ -31,7 +31,7 @@ POST method that requires the following body:
 From here you can log in for a specific username, the password passed as a parameter will be compared with the one saved during registration.
 
 In case of multi_factor a token will be generated and sent to the user's email instead.
-<br/>
+<br/><br/>
 **/multi_factor/**<br/>
 POST method that requires the following body:
 ```javascript
