@@ -7,6 +7,7 @@ docker run -d -p 5000:5000 -e PYTHONUNBUFFERED=1 -e ENABLE_LOG=1 -e SECRET_KEY=1
 ```
 
 \* in this case we can access the server from localhost:5000
+\* SERVER_MAIL and SERVER_MAIL_PWD need to be set
 ## Endpoint
 ### /register/
 POST method that requires the following body:
