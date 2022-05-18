@@ -1,5 +1,5 @@
 # basic-login-system
-A simple authentication system that supports registration, simple login and 2FA and sends e-mail when a token is generated.
+A simple authentication system that supports registration, basic safe login and two-factor-authentication, sends e-mail when a token is generated.
 
 Once you have imported the docker image, you need to set some environment variables, i suggest to run this command: 
 ```bash
