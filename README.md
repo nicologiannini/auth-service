@@ -22,8 +22,8 @@ The registration flow of new users is managed from this route. Following the val
 * **/login/** <br/>
 ```javascript
 {
-    "username": "test", // 4-16 char
-    "password": "12345678", // 8-16 char
+    "username": "test",
+    "password": "12345678",
 }
 ```
 From here you can log in for a specific user the password passed as a parameter will be compared with the one saved during registration.
@@ -33,7 +33,7 @@ In case of multi_factor instead a token will be generated and sent to the user's
 * **/multi_factor/**<br/>
 ```javascript
 {
-    "username": "test", // 4-16 char
+    "username": "test",
     "token": "000000", // 6-digit
 }
 ```
