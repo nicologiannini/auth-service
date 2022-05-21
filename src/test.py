@@ -78,7 +78,6 @@ class TestProcessHandlers(unittest.TestCase):
             user_sample[4] = 1
             self.assertEqual(handler.login_handler(
                 response_sample, data_sample), None)
-            self.assertIsNotNone(response_sample.body['token'])
 
     def test_multi_factor_handler(self):
         with patch('dbengine.get_user_by_username') as patched, \
