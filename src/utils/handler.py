@@ -48,8 +48,7 @@ def login_handler(response: Response, data: dict):
         response.succeded(200, NEW_TOKEN)
 
     if(data and {'username', 'password'} == data.keys()):
-        raw_user = helper.retrieve_user(data['username'])
-        user = User(*list(raw_user)[1:])
+        user = helper.retrieve_user(data['username'])
         if not user.multi_factor:
             _basic_login(response, user, data['password'])
         else:
@@ -60,8 +59,7 @@ def login_handler(response: Response, data: dict):
 @helper.log_execution
 def multi_factor_handler(response: Response, data: dict):
     if(data and {'username', 'token'} == data.keys()):
-        raw_user = helper.retrieve_user(data['username'])
-        user = User(*list(raw_user)[1:])
+        user = helper.retrieve_user(data['username'])
         if not user.multi_factor:
             raise ValueError(NOT_ALLOWED)
         validator.verify_token(

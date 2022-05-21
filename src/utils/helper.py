@@ -7,11 +7,11 @@ from classes import User
 ENABLE_LOG = os.environ.get('ENABLE_LOG')
 DT_FORMAT = '%d/%m/%Y %H:%M:%S'
 
-def retrieve_user(username):
+def retrieve_user(username) -> User:
     raw_user = dbengine.get_user_by_username(username)
     if not raw_user:
         raise ValueError('User not found')
-    return raw_user
+    return User(*list(raw_user)[1:])
 
 def refresh_token(user: User):
     new_token = ''.join([str(random.randint(0, 9)) for _ in range(6)])
