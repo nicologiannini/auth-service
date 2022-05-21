@@ -1,6 +1,6 @@
 import os
 import smtplib, ssl
-from utils import log_detail
+from utils.helper import log_detail
 
 SERVER_MAIL = os.environ.get('SERVER_MAIL')
 SERVER_MAIL_PWD = os.environ.get('SERVER_MAIL_PWD')

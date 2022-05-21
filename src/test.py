@@ -1,45 +1,45 @@
 import unittest
-import utils
-import handler
+import utils.helper as helper
+import utils.validator as validator
+import utils.handler as handler
 from mock import patch
 from classes import Response
+from flask_bcrypt import generate_password_hash
 
 class TestValidations(unittest.TestCase):
     def test_validate_username(self):
         with patch('dbengine.get_user_by_username') as patched:
             patched.return_value = False
-            self.assertEqual(utils.validate_username('test'), 'test')
-            self.assertRaises(ValueError, utils.validate_username, '')
+            self.assertEqual(validator.validate_username('test'), 'test')
+            self.assertRaises(ValueError, validator.validate_username, '')
 
     def test_validate_email(self):
         with patch('dbengine.get_user_by_email') as patched:
             patched.return_value = False
-            self.assertEqual(utils.validate_email(
+            self.assertEqual(validator.validate_email(
                 'test@gmail.com'), 'test@gmail.com')
-            self.assertRaises(ValueError, utils.validate_email, 'test@')
-            self.assertRaises(TypeError, utils.validate_email, 0)
+            self.assertRaises(ValueError, validator.validate_email, 'test@')
+            self.assertRaises(TypeError, validator.validate_email, 0)
 
     def test_validate_password(self):
-        self.assertEqual(utils.check_password_hash(
-            utils.validate_password('12345678'), '12345678'), True)
-        self.assertRaises(ValueError, utils.validate_email, 'abcd')
+        self.assertEqual(validator.check_password_hash(
+            validator.validate_password('12345678'), '12345678'), True)
+        self.assertRaises(ValueError, validator.validate_email, 'abcd')
 
     def test_validate_multi_factor(self):
-        self.assertEqual(utils.validate_multi_factor(True), 1)
-        self.assertRaises(ValueError, utils.validate_multi_factor, 0)
+        self.assertEqual(validator.validate_multi_factor(True), 1)
+        self.assertRaises(ValueError, validator.validate_multi_factor, 0)
 
 class TestVerifications(unittest.TestCase):
     def test_verify_password(self):
-        hashed_password = utils.generate_password_hash(
+        hashed_password = generate_password_hash(
             'abcd1234').decode('utf-8')
-        self.assertRaises(ValueError, utils.verify_password,
+        self.assertRaises(ValueError, validator.verify_password,
                           hashed_password, 'abcd1111')
 
     def test_verify_token(self):
-        self.assertEqual(utils.verify_token(
-            '123456', utils.time_now(), '123456'), True)
-        self.assertRaises(ValueError, utils.verify_token,
-                          '123456', utils.time_now(), '000000')
+        self.assertRaises(ValueError, validator.verify_token,
+                          '123456', helper.time_now(), '000000')
 
 class TestProcessHandlers(unittest.TestCase):
     def test_register_handler(self):
@@ -61,9 +61,9 @@ class TestProcessHandlers(unittest.TestCase):
     def test_login_handler(self):
         with patch('dbengine.get_user_by_username') as patched_a, \
                 patch('dbengine.update_user_token_info') as patched_b, \
-                patch('sender.send_token_mail') as patched_c, \
-                patch('handler.session', dict()) as session:
-            user_sample = [-1, '', '', utils.generate_password_hash(
+                patch('utils.sender.send_token_mail') as patched_c, \
+                patch('utils.handler.session', dict()) as session:
+            user_sample = [-1, '', '', generate_password_hash(
                 '00000000').decode('utf-8'), 0, '', '', '']
             patched_a.return_value = user_sample
             patched_b.return_value = True
@@ -81,8 +81,8 @@ class TestProcessHandlers(unittest.TestCase):
 
     def test_multi_factor_handler(self):
         with patch('dbengine.get_user_by_username') as patched, \
-                patch('handler.session', dict()) as session:
-            user_sample = [-1, '', '', '', 1, '', '123456', utils.time_now()]
+                patch('utils.handler.session', dict()) as session:
+            user_sample = [-1, '', '', '', 1, '', '123456', helper.time_now()]
             patched.return_value = user_sample
             response_sample = Response()
             data_sample = {'username': 'test', 'token': '123456'}

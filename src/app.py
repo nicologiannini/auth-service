@@ -2,11 +2,11 @@
 # encoding: utf-8
 
 import os
-import handler
+import utils.handler as handler
 from dbengine import database_init
 from flask import Flask, request, jsonify
 from classes import Response
-from utils import log_execution
+from utils.helper import log_execution
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
@@ -70,4 +70,4 @@ def multi_factor():
 
 if __name__ == '__main__':
     database_init()
-    app.run(host='0.0.0.0', port=105)
+    app.run(host='0.0.0.0')
