@@ -1,13 +1,6 @@
-# basic-login-system
-A simple authentication system that supports registration, basic safe login and two-factor-authentication, sends e-mail when a token is generated.
+# auth-service
+A simple authentication system that supports registration, login and two-factor-authentication, sends email when a token is generated.
 
-Once you have imported the docker image, you need to set some environment variables, i suggest to run this command: 
-```bash
-docker run -d -p 5000:5000 -e PYTHONUNBUFFERED=1 -e ENABLE_LOG=1 -e SECRET_KEY=12345 -e SERVER_MAIL={your_gmail} -e SERVER_MAIL_PWD={your_gmail_password} basic-login-system
-```
-
-\* in this case we can access the server from localhost:5000<br/>
-\* SERVER_MAIL and SERVER_MAIL_PWD need to be set
 ## Endpoint
 ### /register/
 POST method that requires the following body:
@@ -41,7 +34,7 @@ POST method that requires the following body:
     "token": "000000", // 6-digit
 }
 ```
- Endpoint for system login via token validation for multi-factor authentication. Access will be granted only in case of correct and non-expired token (5 minutes from generation).
+Endpoint for system login via token validation for multi-factor authentication. Access will be granted only in case of correct and non-expired token (5 minutes from generation).
 
 ## Testing
 ```bash

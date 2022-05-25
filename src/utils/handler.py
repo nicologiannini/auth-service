@@ -8,7 +8,7 @@ from classes import User, Response
 INVALID_REQ = 'Client sent an invalid request.'
 LOGIN_OK = 'Successful login.'
 NEW_TOKEN = 'A new token has been generated.'
-NOT_ALLOWED = 'Method not allowed.'
+FORBIDDEN = 'Method not allowed.'
 
 '''
 NOTE: Each handler deals with a specific process and cascades all the 
@@ -36,23 +36,13 @@ def register_handler(response: Response, data: dict):
 
 @helper.log_execution
 def login_handler(response: Response, data: dict):
-    def _basic_login(response: Response, user: User, password_to_verify: str):
-        validator.verify_password(user.password, password_to_verify)
-        session[user.username] = True
-        response.succeded(200, LOGIN_OK)
-
-    def _generate_token(response: Response, user: User, password_to_verify: str):
-        validator.verify_password(user.password, password_to_verify)
-        helper.refresh_token(user)
-        sender.send_token_mail(user.email, user.auth_token)
-        response.succeded(200, NEW_TOKEN)
-
     if(data and {'username', 'password'} == data.keys()):
         user = helper.retrieve_user(data['username'])
+        validator.verify_password(user.password, data['password'])
         if not user.multi_factor:
-            _basic_login(response, user, data['password'])
+            _basic_login(response, user)
         else:
-            _generate_token(response, user, data['password'])
+            _generate_token(response, user)
     else:
         raise AttributeError(INVALID_REQ)
 
@@ -61,10 +51,18 @@ def multi_factor_handler(response: Response, data: dict):
     if(data and {'username', 'token'} == data.keys()):
         user = helper.retrieve_user(data['username'])
         if not user.multi_factor:
-            raise ValueError(NOT_ALLOWED)
+            raise ValueError(FORBIDDEN)
         validator.verify_token(
             user.auth_token, user.token_exp_date, data['token'])
-        session[user.username] = True
-        response.succeded(200, LOGIN_OK)
+        _basic_login(response, user)
     else:
         raise AttributeError(INVALID_REQ)
+
+def _basic_login(response: Response, user: User):
+    session[user.username] = True
+    response.succeded(200, LOGIN_OK)
+
+def _generate_token(response: Response, user: User):
+    helper.refresh_token(user)
+    sender.send_token_mail(user.email, user.auth_token)
+    response.succeded(200, NEW_TOKEN)
