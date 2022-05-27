@@ -1,10 +1,10 @@
 import unittest
+import hashlib
 import utils.helper as helper
 import utils.validator as validator
 import utils.handler as handler
 from mock import patch
 from classes import Response
-from flask_bcrypt import generate_password_hash
 
 class TestValidations(unittest.TestCase):
     def test_validate_username(self):
@@ -22,8 +22,6 @@ class TestValidations(unittest.TestCase):
             self.assertRaises(TypeError, validator.validate_email, 0)
 
     def test_validate_password(self):
-        self.assertEqual(validator.check_password_hash(
-            validator.validate_password('12345678'), '12345678'), True)
         self.assertRaises(ValueError, validator.validate_email, 'abcd')
 
     def test_validate_multi_factor(self):
@@ -32,10 +30,11 @@ class TestValidations(unittest.TestCase):
 
 class TestVerifications(unittest.TestCase):
     def test_verify_password(self):
-        hashed_password = generate_password_hash(
-            'abcd1234').decode('utf-8')
+        hashed_password = validator.validate_password('abcd1234')
+        self.assertEqual(validator.verify_password(
+            hashed_password, 'abcd1234'), True)
         self.assertRaises(ValueError, validator.verify_password,
-                          hashed_password, 'abcd1111')
+            hashed_password, 'abcd')
 
     def test_verify_token(self):
         self.assertRaises(ValueError, validator.verify_token,
@@ -61,10 +60,9 @@ class TestProcessHandlers(unittest.TestCase):
     def test_login_handler(self):
         with patch('dbengine.get_user_by_username') as patched_a, \
                 patch('dbengine.update_user_token_info') as patched_b, \
-                patch('utils.sender.send_token_mail') as patched_c, \
-                patch('utils.handler.session', dict()) as session:
-            user_sample = [-1, '', '', generate_password_hash(
-                '00000000').decode('utf-8'), 0, '', '', '']
+                patch('utils.sender.send_token_mail') as patched_c:
+            hashed_password = validator.validate_password('00000000')
+            user_sample = [-1, '', '', hashed_password, 0, '', '', '']
             patched_a.return_value = user_sample
             patched_b.return_value = True
             patched_c.return_value = True
@@ -80,8 +78,7 @@ class TestProcessHandlers(unittest.TestCase):
                 response_sample, data_sample), None)
 
     def test_multi_factor_handler(self):
-        with patch('dbengine.get_user_by_username') as patched, \
-                patch('utils.handler.session', dict()) as session:
+        with patch('dbengine.get_user_by_username') as patched:
             user_sample = [-1, '', '', '', 1, '', '123456', helper.time_now()]
             patched.return_value = user_sample
             response_sample = Response()

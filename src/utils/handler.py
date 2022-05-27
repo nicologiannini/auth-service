@@ -2,7 +2,6 @@ import utils.helper as helper
 import utils.validator as validator
 import utils.sender as sender
 import dbengine
-from flask import session
 from classes import User, Response
 
 INVALID_REQ = 'Client sent an invalid request.'
@@ -59,7 +58,6 @@ def multi_factor_handler(response: Response, data: dict):
         raise AttributeError(INVALID_REQ)
 
 def _basic_login(response: Response, user: User):
-    session[user.username] = True
     response.succeded(200, LOGIN_OK)
 
 def _generate_token(response: Response, user: User):

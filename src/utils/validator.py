@@ -1,6 +1,6 @@
 import re
 import dbengine
-from flask_bcrypt import generate_password_hash, check_password_hash
+import hashlib, uuid
 from datetime import datetime
 from utils.helper import time_now
 
@@ -28,7 +28,9 @@ def validate_email(email) -> str:
 def validate_password(password) -> str:
     if not 8 <= len(password) <= 16:
         raise ValueError('This password does not respect requirements')
-    return generate_password_hash(password).decode('utf-8')
+    salt = uuid.uuid4().hex
+    hashed_password = hashlib.sha256(f'{password}{salt}'.encode('utf-8')).hexdigest()
+    return f'{salt}:{hashed_password}'
 
 def validate_multi_factor(is_enabled: bool) -> int:
     if not isinstance(is_enabled, bool):
@@ -43,7 +45,8 @@ def verify_token(last_token, last_token_exp_date, token_to_verify):
         raise ValueError('This token is expired')
     return True
 
-def verify_password(hashed_password, password_to_verify):
-    if not check_password_hash(hashed_password, password_to_verify):
+def verify_password(hashed_password: str, password_to_verify):
+    salt, password = hashed_password.split(':')
+    if not password == hashlib.sha256(f'{password_to_verify}{salt}'.encode('utf-8')).hexdigest():
         raise ValueError('Wrong password')
     return True
