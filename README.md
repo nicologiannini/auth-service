@@ -26,7 +26,7 @@ From here you can log in for a specific username, the password passed as a param
 
 In case of multi_factor a token will be generated and sent to the user's email instead.
 <br/><br/>
-### /multi_factor/
+### /login/token/
 POST method that requires the following body:
 ```javascript
 {

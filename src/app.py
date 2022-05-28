@@ -9,6 +9,7 @@ from classes import Response
 from utils.helper import log_execution
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 app.secret_key = os.environ.get('SECRET_KEY')
 
 GENERIC_ERROR = 'A generic error occurred on the server.'
@@ -63,7 +64,7 @@ def access():
     "token": "123456"
 }
 '''
-@app.route('/multi_factor/', methods=['POST'])
+@app.route('/login/token/', methods=['POST'])
 def multi_factor():
     return service_manager(handler.multi_factor_handler)
 
