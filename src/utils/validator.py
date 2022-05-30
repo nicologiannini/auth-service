@@ -37,11 +37,11 @@ def validate_multi_factor(is_enabled: bool) -> int:
         raise ValueError('multi_factor should be boolean type')
     return 1 if is_enabled else 0
 
-def verify_token(last_token, last_token_exp_date, token_to_verify):
-    last_token_exp_date = datetime.strptime(last_token_exp_date, DT_FORMAT)
+def verify_token(last_token, last_token_exp, token_to_verify):
+    last_token_exp = datetime.strptime(last_token_exp, DT_FORMAT)
     if last_token != token_to_verify:
         raise ValueError('Invalid token')
-    if datetime.strptime(time_now(), DT_FORMAT) > last_token_exp_date:
+    if datetime.strptime(time_now(), DT_FORMAT) > last_token_exp:
         raise ValueError('This token is expired')
     return True
 

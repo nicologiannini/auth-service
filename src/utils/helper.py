@@ -15,10 +15,10 @@ def retrieve_user(username) -> User:
 
 def refresh_token(user: User):
     new_token = ''.join([str(random.randint(0, 9)) for _ in range(6)])
-    new_token_exp_date = (
+    new_token_exp = (
         datetime.now() + timedelta(minutes=5)).strftime(DT_FORMAT)
-    user.auth_token = new_token
-    user.token_exp_date = new_token_exp_date
+    user.token = new_token
+    user.token_exp = new_token_exp
     if not dbengine.update_user_token_info(user):
         raise Exception
 

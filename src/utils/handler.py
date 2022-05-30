@@ -52,7 +52,7 @@ def multi_factor_handler(response: Response, data: dict):
         if not user.multi_factor:
             raise ValueError(FORBIDDEN)
         validator.verify_token(
-            user.auth_token, user.token_exp_date, data['token'])
+            user.token, user.token_exp, data['token'])
         _basic_login(response, user)
     else:
         raise AttributeError(INVALID_REQ)
@@ -62,5 +62,5 @@ def _basic_login(response: Response, user: User):
 
 def _generate_token(response: Response, user: User):
     helper.refresh_token(user)
-    sender.send_token_mail(user.email, user.auth_token)
-    response.succeded(200, NEW_TOKEN)
+    sender.send_token_mail(user.email, user.token)
+    response.build(200, [('message', NEW_TOKEN), ('exp', user.token_exp)])

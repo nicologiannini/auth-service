@@ -30,7 +30,7 @@ def database_init():
 
 def create_users_table():
     return execute_statement(
-        "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, email TEXT UNIQUE, password TEXT, multi_factor INTEGER, created_at TEXT, auth_token TEXT, token_exp_date TEXT)")
+        "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, email TEXT UNIQUE, password TEXT, multi_factor INTEGER, created_at TEXT, token TEXT, token_exp TEXT)")
 
 def insert_user(user: User):
     return execute_statement("INSERT INTO users (username, email, password, multi_factor, created_at) VALUES (?, ?, ?, ?, ?)",
@@ -46,4 +46,4 @@ def get_user_by_email(email):
     return result[0] if result else False
 
 def update_user_token_info(user: User):
-    return execute_statement(f"UPDATE users SET auth_token = '{user.auth_token}', token_exp_date = '{user.token_exp_date}' WHERE username = '{user.username}'")
+    return execute_statement(f"UPDATE users SET token = '{user.token}', token_exp = '{user.token_exp}' WHERE username = '{user.username}'")
