@@ -46,7 +46,7 @@ def login_handler(response: Response, data: dict):
         raise AttributeError(INVALID_REQ)
 
 @helper.log_execution
-def multi_factor_handler(response: Response, data: dict):
+def token_handler(response: Response, data: dict):
     if(data and {'username', 'token'} == data.keys()):
         user = helper.retrieve_user(data['username'])
         if not user.multi_factor:

@@ -77,17 +77,17 @@ class TestProcessHandlers(unittest.TestCase):
             self.assertEqual(handler.login_handler(
                 response_sample, data_sample), None)
 
-    def test_multi_factor_handler(self):
+    def test_token_handler(self):
         with patch('dbengine.get_user_by_username') as patched:
             user_sample = [-1, '', '', '', 1, '', '123456', helper.time_now()]
             patched.return_value = user_sample
             response_sample = Response()
             data_sample = {'username': 'test', 'token': '123456'}
-            self.assertEqual(handler.multi_factor_handler(
+            self.assertEqual(handler.token_handler(
                 response_sample, data_sample), None)
             self.assertEqual(response_sample.status_code, 200)
             self.assertRaises(
-                AttributeError, handler.multi_factor_handler, response_sample, {})
+                AttributeError, handler.token_handler, response_sample, {})
 
 
 if __name__ == '__main__':

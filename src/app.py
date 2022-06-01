@@ -66,7 +66,7 @@ def access():
 '''
 @app.route('/login/token/', methods=['POST'])
 def multi_factor():
-    return service_manager(handler.multi_factor_handler)
+    return service_manager(handler.token_handler)
 
 
 if __name__ == '__main__':
