@@ -1,5 +1,4 @@
 import unittest
-import hashlib
 import utils.helper as helper
 import utils.validator as validator
 import utils.handler as handler
@@ -59,13 +58,11 @@ class TestProcessHandlers(unittest.TestCase):
 
     def test_login_handler(self):
         with patch('dbengine.get_user_by_username') as patched_a, \
-                patch('dbengine.update_user_token_info') as patched_b, \
-                patch('utils.sender.send_token_mail') as patched_c:
+                patch('dbengine.update_user_token_info') as patched_b:
             hashed_password = validator.validate_password('00000000')
             user_sample = [-1, '', '', hashed_password, 0, '', '', '']
             patched_a.return_value = user_sample
             patched_b.return_value = True
-            patched_c.return_value = True
             response_sample = Response()
             data_sample = {'username': 'test', 'password': '00000000'}
             self.assertEqual(handler.login_handler(

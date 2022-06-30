@@ -34,36 +34,16 @@ def service_manager(endpoint_handler):
     return jsonify(response.__dict__), response.status_code
 
 
-'''
-{
-    "username": "test",
-    "email": "test@gmail.com",
-    "password": "12345678",
-    "multi_factor": true
-}
-'''
 @app.route('/register/', methods=['POST'])
 def register():
     return service_manager(handler.register_handler)
 
 
-'''
-{
-    "username": "test",
-    "password": "12345678"
-}
-'''
 @app.route('/login/', methods=['POST'])
 def access():
     return service_manager(handler.login_handler)
 
 
-'''
-{
-    "username": "test",
-    "token": "123456"
-}
-'''
 @app.route('/login/token/', methods=['POST'])
 def multi_factor():
     return service_manager(handler.token_handler)

@@ -1,6 +1,5 @@
 import utils.helper as helper
 import utils.validator as validator
-import utils.sender as sender
 import dbengine
 from classes import User, Response
 
@@ -62,5 +61,4 @@ def _basic_login(response: Response, user: User):
 
 def _generate_token(response: Response, user: User):
     helper.refresh_token(user)
-    sender.send_token_mail(user.email, user.token)
     response.build(200, [('message', NEW_TOKEN), ('exp', user.token_exp)])
