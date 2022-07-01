@@ -2,7 +2,6 @@ import unittest
 import src.utils.authorizer as authorizer
 import src.utils.authenticator as authenticator
 import src.utils.exceptions as exceptions
-from mock import patch
 
 
 class TestAuthenticator(unittest.TestCase):
