@@ -36,16 +36,16 @@ def register_handler(request: Request, result: Result):
 
 def login_handler(request: Request, result: Result):
     if not request.json or not{
-            "email", "password", "keep_session"} == dict(
+            "email", "password"} == dict(
             request.json).keys():
         raise exceptions.InvalidRequest(messages.INVALID_REQ)
 
     data = dict(request.json)
-    email, password, keep_session = data["email"], data["password"], data["keep_session"]
+    email, password = data["email"], data["password"]
     user = users.get_user_by_email(email)
     authenticator.verify_password(user.password, password)
 
-    token = authorizer.generate_token(user.id, password, keep_session)
+    token = authorizer.generate_token(user.id, password)
 
     result.build(
         200,

@@ -3,7 +3,7 @@ from config import SECRET_KEY
 from datetime import datetime
 
 
-def generate_token(user_id: str, password: str, keep_session: bool):
+def generate_token(user_id: str, password: str):
     issued_at = int(datetime.timestamp(datetime.now()))
     expires_at = issued_at + (60 * 60 * 12)
     
