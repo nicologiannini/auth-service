@@ -1,9 +1,9 @@
 import re
 import hashlib
 import uuid
-import entities.users as users
-import utils.exceptions as exceptions
-import utils.messages as messages
+import src.entities.users as users
+import src.utils.exceptions as exceptions
+import src.utils.messages as messages
 
 
 def validate_email(email):

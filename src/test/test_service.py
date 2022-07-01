@@ -1,7 +1,7 @@
 import unittest
-import utils.authorizer as authorizer
-import utils.authenticator as authenticator
-import utils.exceptions as exceptions
+import src.utils.authorizer as authorizer
+import src.utils.authenticator as authenticator
+import src.utils.exceptions as exceptions
 
 
 class TestAuthenticator(unittest.TestCase):

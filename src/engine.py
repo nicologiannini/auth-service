@@ -1,6 +1,6 @@
 import psycopg2
 import contextlib
-from config import DB_CONFIG
+from src.config import DB_CONFIG
 
 
 def execute_statement(query, params=None):

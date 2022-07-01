@@ -1,5 +1,5 @@
 import jwt
-from config import SECRET_KEY
+from src.config import SECRET_KEY
 from datetime import datetime
 
 

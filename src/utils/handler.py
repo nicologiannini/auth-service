@@ -1,10 +1,10 @@
-import utils.authenticator as authenticator
-import utils.exceptions as exceptions
-import utils.messages as messages
-import utils.authorizer as authorizer
-import entities.users as users
+import src.utils.authenticator as authenticator
+import src.utils.exceptions as exceptions
+import src.utils.messages as messages
+import src.utils.authorizer as authorizer
+import src.entities.users as users
 from flask import Request
-from utils.helper import Result
+from src.utils.helper import Result
 
 
 def register_handler(request: Request, result: Result):
