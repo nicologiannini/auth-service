@@ -1,4 +1,7 @@
 # auth-service
+
+[![CircleCI](https://circleci.com/gh/nicologiannini/auth-service/tree/main.svg?style=svg)](https://circleci.com/gh/nicologiannini/auth-service/tree/main)
+
 A simple authentication system that supports registration, login and authorization.
 
 ## Endpoint
