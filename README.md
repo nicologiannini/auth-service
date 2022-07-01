@@ -12,7 +12,7 @@ POST method that requires the following body:
     "password": "12345678"
 }
 ```
-<br/>
+
 ### /login/
 POST method that requires the following body:
 ```javascript
