@@ -1,64 +1,68 @@
-import utils.helper as helper
-import utils.validator as validator
-import dbengine
-from classes import User, Response
+import utils.authenticator as authenticator
+import utils.exceptions as exceptions
+import utils.messages as messages
+import utils.authorizer as authorizer
+import entities.users as users
+from flask import Request
+from utils.helper import Result
 
-INVALID_REQ = 'Client sent an invalid request.'
-LOGIN_OK = 'Successful login.'
-NEW_TOKEN = 'A new token has been generated.'
-FORBIDDEN = 'Method not allowed.'
 
-'''
-NOTE: Each handler deals with a specific process and cascades all the 
-processing needed to complete it.
+def register_handler(request: Request, result: Result):
+    if not request.json or not{
+            "first_name", "last_name", "email", "password"} == dict(
+            request.json).keys():
+        raise exceptions.InvalidRequest(messages.INVALID_REQ)
 
-TODO: Manage login attempts on already logged in users, there should be a /logout/
-to refresh session.
-'''
+    data = dict(request.json)
+    first_name, last_name, email, password = data["first_name"], data[
+        "last_name"], data["email"], data["password"]
+    authenticator.validate_email(data["email"])
+    authenticator.validate_password(data["password"])
+    hashed_pwd = authenticator.secure_password(password)
+    user_data = dict(
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        password=hashed_pwd
+    )
+    new_user = users.User(**user_data)
+    new_user.insert()
 
-@helper.log_execution
-def register_handler(response: Response, data: dict):
-    if(data and {'username', 'email', 'password', 'multi_factor'} == data.keys()):
-        username = validator.validate_username(data['username'])
-        email = validator.validate_email(data['email'])
-        password = validator.validate_password(data['password'])
-        multi_factor = validator.validate_multi_factor(
-            data['multi_factor'])
-        new_user = User(username, email, password, multi_factor)
-        if dbengine.insert_user(new_user):
-            response.succeded(200, f'{new_user.username} has been created.')
-        else:
-            raise Exception
-    else:
-        raise AttributeError(INVALID_REQ)
+    result.build(200, dict(
+        message=messages.NEW_USER,
+        user=new_user.id
+    ))
 
-@helper.log_execution
-def login_handler(response: Response, data: dict):
-    if(data and {'username', 'password'} == data.keys()):
-        user = helper.retrieve_user(data['username'])
-        validator.verify_password(user.password, data['password'])
-        if not user.multi_factor:
-            _basic_login(response, user)
-        else:
-            _generate_token(response, user)
-    else:
-        raise AttributeError(INVALID_REQ)
 
-@helper.log_execution
-def token_handler(response: Response, data: dict):
-    if(data and {'username', 'token'} == data.keys()):
-        user = helper.retrieve_user(data['username'])
-        if not user.multi_factor:
-            raise ValueError(FORBIDDEN)
-        validator.verify_token(
-            user.token, user.token_exp, data['token'])
-        _basic_login(response, user)
-    else:
-        raise AttributeError(INVALID_REQ)
+def login_handler(request: Request, result: Result):
+    if not request.json or not{
+            "email", "password", "keep_session"} == dict(
+            request.json).keys():
+        raise exceptions.InvalidRequest(messages.INVALID_REQ)
 
-def _basic_login(response: Response, user: User):
-    response.succeded(200, LOGIN_OK)
+    data = dict(request.json)
+    email, password, keep_session = data["email"], data["password"], data["keep_session"]
+    user = users.get_user_by_email(email)
+    authenticator.verify_password(user.password, password)
 
-def _generate_token(response: Response, user: User):
-    helper.refresh_token(user)
-    response.build(200, [('message', NEW_TOKEN), ('exp', user.token_exp)])
+    token = authorizer.generate_token(user.id, password, keep_session)
+
+    result.build(
+        200,
+        dict(
+            message=messages.LOGIN,
+            token=token,
+        ))
+
+
+def validate_session_handler(request: Request, result: Result):
+    if not len(request.cookies) > 0:
+        raise exceptions.InvalidRequest(messages.INVALID_REQ)
+
+    token = request.cookies.get(messages.COOKIE_KEY)
+    payload = authorizer.validate_token(token)
+
+    result.build(200, dict(
+        message=messages.TOKEN_OK,
+        user_id=payload.get("usr")
+    ))

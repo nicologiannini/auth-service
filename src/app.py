@@ -2,53 +2,63 @@
 # encoding: utf-8
 
 import os
+import utils.messages as messages
 import utils.handler as handler
-from dbengine import database_init
-from flask import Flask, request, jsonify
-from classes import Response
-from utils.helper import log_execution
+from utils.exceptions import DefaultException
+from utils.helper import Result
+from flask import Flask, request, jsonify, make_response, Response
+from flask_cors import CORS
+from engine import database_init
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-app.secret_key = os.environ.get('SECRET_KEY')
+app.secret_key = os.environ.get("SECRET_KEY")
+app.config["CORS_HEADERS"] = "Content-Type"
+CORS(app, supports_credentials=True)
 
-GENERIC_ERROR = 'A generic error occurred on the server.'
 
-'''
-NOTE: The service manager sorts the flow for all endpoints by calling the specific 
-process handler while catching all significant exceptions.
-'''
-
-@log_execution
-def service_manager(endpoint_handler):
-    response = Response()
+def service_manager(service_handler) -> Response:
+    result = Result()
     try:
-        data = request.get_json()
-        endpoint_handler(response, data)
-    except AttributeError as error:
-        response.failed(400, str(error))
-    except ValueError as error:
-        response.failed(401, str(error))
+        service_handler(request, result)
+    except DefaultException as err:
+        result.failed(err.code, err.message)
     except Exception as e:
-        response.failed(500, GENERIC_ERROR)
-    return jsonify(response.__dict__), response.status_code
+        result.failed(500, messages.GENERIC_ERROR)
+
+    response = make_response(jsonify(result.__dict__), result.status_code)
+
+    return response
 
 
-@app.route('/register/', methods=['POST'])
+@app.route("/register/", methods=["POST"])
 def register():
     return service_manager(handler.register_handler)
 
 
-@app.route('/login/', methods=['POST'])
+@app.route("/login/", methods=["POST"])
 def access():
-    return service_manager(handler.login_handler)
+    response = service_manager(handler.login_handler)
+    response_data = dict(response.json)
+    if response_data.get("status_code") == 200:
+        cookie = dict(
+            key=messages.COOKIE_KEY,
+            value=response_data.get("body")["token"],
+            domain=None,
+            secure=True,
+            samesite="None",
+            httponly=True
+        )
+        response.set_cookie(**cookie)
+
+    return response
 
 
-@app.route('/login/token/', methods=['POST'])
-def multi_factor():
-    return service_manager(handler.token_handler)
+@app.route("/session/", methods=["GET"])
+def validate_session():
+    return service_manager(handler.validate_session_handler)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     database_init()
-    app.run(host='0.0.0.0')
+    app.run(host="127.0.0.1", ssl_context='adhoc')
