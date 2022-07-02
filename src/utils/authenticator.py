@@ -6,7 +6,7 @@ import src.utils.exceptions as exceptions
 import src.utils.messages as messages
 
 
-def validate_email(email):
+def validate_email(email) -> None:
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     if not isinstance(
             email, str) or not re.fullmatch(
@@ -17,7 +17,7 @@ def validate_email(email):
         raise exceptions.ValidationError(messages.EMAIL_ALREADY_EXIST)
 
 
-def validate_password(password):
+def validate_password(password) -> None:
     if not 8 <= len(password) <= 16:
         raise exceptions.ValidationError(messages.PASSWORD_ALREADY_EXIST)
 
@@ -30,7 +30,7 @@ def secure_password(password) -> str:
     return f'{salt}:{hashed_password}'
 
 
-def verify_password(hashed_password: str, password_to_verify):
+def verify_password(hashed_password: str, password_to_verify) -> None:
     salt, password = hashed_password.split(':')
     if not password == hashlib.sha256(
             f'{password_to_verify}{salt}'.encode('utf-8')).hexdigest():

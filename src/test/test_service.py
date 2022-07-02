@@ -21,13 +21,19 @@ class TestAuthenticator(unittest.TestCase):
         self.assertRaises(
             exceptions.Unauthorized, authenticator.verify_password, hashed_pwd,
             "abcd")
+        assert len(hashed_pwd.split(":")) == 2
+        assert len(hashed_pwd) == 97
 
 
 class TestAuthorizer(unittest.TestCase):
+    def test_generate_token(self):
+        token = authorizer.generate_token("abcd")
+        assert len(token.split(".")) == 3
+
     def test_token(self):
-        token = authorizer.generate_token("abcd", "12345678")
+        token = authorizer.generate_token("abcd")
         payload = authorizer.validate_token(token)
-        assert {"iat", "exp", "usr", "pwd"} == dict(payload).keys()
+        assert {"iat", "exp", "usr"} == dict(payload).keys()
 
 
 if __name__ == "__main__":

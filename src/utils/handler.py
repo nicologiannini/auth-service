@@ -44,14 +44,13 @@ def login_handler(request: Request, result: Result):
     email, password = data["email"], data["password"]
     user = users.get_user_by_email(email)
     authenticator.verify_password(user.password, password)
-
-    token = authorizer.generate_token(user.id, password)
+    token = authorizer.generate_token(user.id)
 
     result.build(
         200,
         dict(
             message=messages.LOGIN,
-            token=token,
+            token=token
         ))
 
 
