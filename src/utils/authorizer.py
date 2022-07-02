@@ -1,4 +1,6 @@
 import jwt
+import src.utils.messages as messages
+from flask import Response
 from src.config import SECRET_KEY
 from datetime import datetime
 
@@ -32,3 +34,30 @@ def validate_token(token) -> dict:
     )
 
     return payload
+
+
+def generate_session_cookie(response: Response) -> Response:
+    response_data = dict(response.json)
+    if response_data.get("status_code") == 200:
+        cookie = dict(
+            key=messages.COOKIE_KEY,
+            value=response_data.get("body")["token"],
+            domain=None,
+            secure=True,
+            samesite="None",
+            httponly=True
+        )
+        response.set_cookie(**cookie)
+
+    return response
+
+
+def set_session(func):
+
+    def inner():
+        response = func()
+        generate_session_cookie(response)
+
+        return response
+    
+    return inner

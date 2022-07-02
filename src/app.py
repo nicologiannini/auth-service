@@ -4,6 +4,7 @@
 import os
 import src.utils.messages as messages
 import src.utils.handler as handler
+from src.utils.authorizer import set_session
 from src.utils.exceptions import DefaultException
 from src.utils.helper import Result
 from flask import Flask, request, jsonify, make_response, Response
@@ -37,21 +38,9 @@ def register():
 
 
 @app.route("/login/", methods=["POST"])
+@set_session
 def access():
-    response = service_manager(handler.login_handler)
-    response_data = dict(response.json)
-    if response_data.get("status_code") == 200:
-        cookie = dict(
-            key=messages.COOKIE_KEY,
-            value=response_data.get("body")["token"],
-            domain=None,
-            secure=True,
-            samesite="None",
-            httponly=True
-        )
-        response.set_cookie(**cookie)
-
-    return response
+    return service_manager(handler.login_handler)
 
 
 @app.route("/session/", methods=["GET"])
