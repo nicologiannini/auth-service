@@ -20,12 +20,13 @@ POST method that requires the following body:
 POST method that requires the following body:
 ```javascript
 {
-    "username": "test",
-    "password": "12345678",
+    "email": "test",
+    "password": "12345678"
 }
 ```
 
 ## Testing
+A CirceCI pipeline is running a test phase on committing/merging on the main branch, to run tests in local environment, after installing all the required dependencies, just run command:
 ```bash
-pytest test.py
+pytest
 ```
