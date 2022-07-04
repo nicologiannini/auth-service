@@ -16,6 +16,7 @@ def execute_fetchone(query, params=None):
 
 
 def _execute(query, params=None, type=None, config=DB_CONFIG):
+    result = None
     try:
         with contextlib.closing(psycopg2.connect(**config)) as conn:
             with conn:
@@ -24,13 +25,17 @@ def _execute(query, params=None, type=None, config=DB_CONFIG):
                         query, params) if params else cursor.execute(query)
                     match type:
                         case "fetchone":
-                            return cursor.fetchone()
+                            result = cursor.fetchone()
                         case "fetchall":
-                            return cursor.fetchall()
+                            result = cursor.fetchall()
                         case _:
-                            return True
+                            result = True
+                    conn.commit()
     except Exception as e:
-        return False
+        result = False
+    finally:
+        conn.close()
+        return result
 
 
 def database_init():
