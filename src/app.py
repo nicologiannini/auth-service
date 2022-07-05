@@ -3,10 +3,10 @@
 
 import os
 import src.utils.messages as messages
-import src.utils.handler as handler
 from src.utils.authorizer import set_session
 from src.utils.exceptions import DefaultException
 from src.utils.helper import Result
+from src.services import ServiceHandler, RegisterHandler, LoginHandler, SessionHandler
 from flask import Flask, request, jsonify, make_response, Response
 from flask_cors import CORS
 from src.engine import database_init
@@ -18,34 +18,35 @@ app.config["CORS_HEADERS"] = "Content-Type"
 CORS(app, supports_credentials=True)
 
 
-def service_manager(service_handler) -> Response:
-    result = Result()
+def service_manager(handler: ServiceHandler) -> Response:
+    res = Result()
     try:
-        service_handler(request, result)
+        handler.process()
+        res = handler.result
     except DefaultException as err:
-        result.failed(err.code, err.message)
+        res.failed(err.code, err.message)
     except Exception as e:
-        result.failed(500, messages.GENERIC_ERROR)
+        res.failed(500, messages.GENERIC_ERROR)
 
-    response = make_response(jsonify(result.__dict__), result.status_code)
+    response = make_response(jsonify(res.__dict__), res.status_code)
 
     return response
 
 
 @app.route("/register/", methods=["POST"])
 def register():
-    return service_manager(handler.register_handler)
+    return service_manager(RegisterHandler(request))
 
 
 @app.route("/login/", methods=["POST"])
 @set_session
 def access():
-    return service_manager(handler.login_handler)
+    return service_manager(LoginHandler(request))
 
 
 @app.route("/session/", methods=["GET"])
 def validate_session():
-    return service_manager(handler.validate_session_handler)
+    return service_manager(SessionHandler(request))
 
 
 if __name__ == "__main__":
