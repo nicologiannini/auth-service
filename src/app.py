@@ -27,9 +27,7 @@ def service_manager(handler: ServiceHandler) -> Response:
         res.failed(err.code, err.message)
     except Exception as e:
         res.failed(500, messages.GENERIC_ERROR)
-
     response = make_response(jsonify(res.__dict__), res.status_code)
-
     return response
 
 

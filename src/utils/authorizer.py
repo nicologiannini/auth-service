@@ -8,13 +8,11 @@ from datetime import datetime
 def generate_token(user_id: str) -> str:
     issued_at = int(datetime.timestamp(datetime.now()))
     expires_at = issued_at + (60 * 60 * 12)
-    
     payload = {
         "iat": issued_at,
         "exp": expires_at,
         "usr": user_id
     }
-
     return jwt.encode(
         payload,
         SECRET_KEY,
@@ -32,7 +30,6 @@ def validate_token(token) -> dict:
             verify_iat=True
         )
     )
-
     return payload
 
 
@@ -48,16 +45,14 @@ def generate_session_cookie(response: Response) -> Response:
             httponly=True
         )
         response.set_cookie(**cookie)
-
+        
     return response
 
 
 def set_session(func):
-
     def inner():
         response = func()
         generate_session_cookie(response)
-
         return response
-    
+
     return inner

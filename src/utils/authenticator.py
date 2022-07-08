@@ -26,7 +26,6 @@ def secure_password(password) -> str:
     salt = uuid.uuid4().hex
     hashed_password = hashlib.sha256(
         f'{password}{salt}'.encode('utf-8')).hexdigest()
-
     return f'{salt}:{hashed_password}'
 
 
