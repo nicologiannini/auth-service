@@ -39,8 +39,8 @@ def execute_fetchone(query, params=None):
 
 def _execute(query, params=None, type=None, config=DB_CONFIG):
     result = None
+    conn = psycopg2.connect(**config)
     try:
-        conn = psycopg2.connect(**config)
         with conn:
             with contextlib.closing(conn.cursor()) as cursor:
                 cursor.execute(

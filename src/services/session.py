@@ -21,6 +21,7 @@ class SessionHandler(ServiceHandler):
         self.validate_request()
         token = self.get_request_data()
         payload = authorizer.validate_token(token)
+
         self.result.build(200, dict(
             message=messages.TOKEN_OK,
             user_id=payload.get("usr")

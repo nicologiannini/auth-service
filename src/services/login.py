@@ -10,17 +10,16 @@ from flask import Request
 class LoginHandler(ServiceHandler):
     def __init__(self, request: Request):
         super().__init__(request)
+        self.required_key = ("email", "password")
 
     def validate_request(self):
-        if not self.request.json or not{
-                "email", "password"} == dict(
-                self.request.json).keys():
+        if not set(self.required_key) == dict(self.data).keys():
             raise exceptions.InvalidRequest(messages.INVALID_REQ)
 
     def get_request_data(self):
-        data = dict(self.request.json)
-        email, password = data["email"], data["password"]
-        return email, password
+        data = dict(self.data)
+        values = [data.get(key) for key in self.required_key]   
+        return (*values,)
 
     def process(self):
         self.validate_request()
@@ -28,6 +27,7 @@ class LoginHandler(ServiceHandler):
         user = users.get_user_by_email(email)
         authenticator.verify_password(user.password, password)
         token = authorizer.generate_token(user.id)
+
         self.result.build(200, dict(
             message=messages.LOGIN,
             token=token
