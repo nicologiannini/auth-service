@@ -1,11 +1,11 @@
 import src.utils.authorizer as authorizer
 import src.utils.exceptions as exceptions
 import src.utils.messages as messages
-from src.services.handler import ServiceHandler
+from src.services.handler import BaseService
 from flask import Request
 
 
-class SessionHandler(ServiceHandler):
+class SessionService(BaseService):
     def __init__(self, request: Request):
         super().__init__(request)
 

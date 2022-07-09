@@ -3,11 +3,11 @@ import src.utils.authorizer as authorizer
 import src.utils.exceptions as exceptions
 import src.utils.messages as messages
 import src.entities.users as users
-from src.services.handler import ServiceHandler
+from src.services.handler import BaseService
 from flask import Request
 
 
-class LoginHandler(ServiceHandler):
+class LoginService(BaseService):
     def __init__(self, request: Request):
         super().__init__(request)
         self.required_key = ("email", "password")

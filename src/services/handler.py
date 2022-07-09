@@ -2,7 +2,7 @@ from flask import Request
 from src.utils.helper import Result
 
 
-class ServiceHandler:
+class BaseService:
     def __init__(self, request: Request):
         self.request = request
         self.data = request.get_json()

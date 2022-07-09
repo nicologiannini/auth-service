@@ -6,7 +6,7 @@ import src.utils.messages as messages
 from src.utils.authorizer import set_session
 from src.utils.exceptions import DefaultException
 from src.utils.helper import Result
-from src.services import ServiceHandler, RegisterHandler, LoginHandler, SessionHandler
+from src.services import BaseService, RegisterService, LoginService, SessionService
 from flask import Flask, request, jsonify, make_response, Response
 from flask_cors import CORS
 from src.engine import database_init
@@ -18,11 +18,11 @@ app.config["CORS_HEADERS"] = "Content-Type"
 CORS(app, supports_credentials=True)
 
 
-def service_manager(handler: ServiceHandler) -> Response:
+def service_manager(service: BaseService) -> Response:
     res = Result()
     try:
-        handler.process()
-        res = handler.result
+        service.process()
+        res = service.result
     except DefaultException as err:
         res.failed(err.code, err.message)
     except Exception as e:
@@ -33,18 +33,18 @@ def service_manager(handler: ServiceHandler) -> Response:
 
 @app.route("/register/", methods=["POST"])
 def register():
-    return service_manager(RegisterHandler(request))
+    return service_manager(RegisterService(request))
 
 
 @app.route("/login/", methods=["POST"])
 @set_session
 def access():
-    return service_manager(LoginHandler(request))
+    return service_manager(LoginService(request))
 
 
 @app.route("/session/", methods=["GET"])
 def validate_session():
-    return service_manager(SessionHandler(request))
+    return service_manager(SessionService(request))
 
 
 if __name__ == "__main__":

@@ -53,7 +53,7 @@ def _execute(query, params=None, type=None, config=DB_CONFIG):
                     case QueryType.Statement.value:
                         result = True
                     case _:
-                        result = None
+                        pass
                 conn.commit()
     except Exception as e:
         conn.rollback()

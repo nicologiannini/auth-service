@@ -2,11 +2,11 @@ import src.utils.authenticator as authenticator
 import src.utils.exceptions as exceptions
 import src.utils.messages as messages
 from src.entities.users import User
-from src.services.handler import ServiceHandler
+from src.services.handler import BaseService
 from flask import Request
 
 
-class RegisterHandler(ServiceHandler):
+class RegisterService(BaseService):
     def __init__(self, request: Request):
         super().__init__(request)
         self.required_key = ("first_name", "last_name", "email", "password")
@@ -28,7 +28,7 @@ class RegisterHandler(ServiceHandler):
         hashed_pwd = authenticator.secure_password(password)
 
         new_user_data = [first_name, last_name, email, hashed_pwd]
-        user = User(zip(self.required_key, new_user_data))
+        user = User(**dict(zip(self.required_key, new_user_data)))
         user.insert()
 
         self.result.build(200, dict(

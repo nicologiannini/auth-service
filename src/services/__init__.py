@@ -1,11 +1,11 @@
-from .handler import ServiceHandler
-from .register import RegisterHandler
-from .login import LoginHandler
-from .session import SessionHandler
+from .handler import BaseService
+from .register import RegisterService
+from .login import LoginService
+from .session import SessionService
 
 __all__ = [
-    "ServiceHandler",
-    "RegisterHandler",
-    "LoginHandler",
-    "SessionHandler"
+    "BaseService",
+    "RegisterService",
+    "LoginService",
+    "SessionService"
 ]
