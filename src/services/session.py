@@ -9,17 +9,13 @@ class SessionService(BaseService):
     def __init__(self, request: Request):
         super().__init__(request)
 
-    def validate_request(self):
-        if not len(self.request.cookies) > 0:
+    def validate_request(self) -> None:
+        if not self.has_cookies():
             raise exceptions.InvalidRequest(messages.INVALID_REQ)
 
-    def get_request_data(self):
-        token = self.request.cookies.get(messages.COOKIE_KEY)
-        return token
-
-    def process(self):
+    def process(self) -> None:
         self.validate_request()
-        token = self.get_request_data()
+        token = self.get_cookie(messages.COOKIE_KEY)
         payload = authorizer.validate_token(token)
 
         self.result.build(200, dict(

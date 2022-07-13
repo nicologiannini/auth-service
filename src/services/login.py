@@ -12,16 +12,11 @@ class LoginService(BaseService):
         super().__init__(request)
         self.required_key = ("email", "password")
 
-    def validate_request(self):
-        if not set(self.required_key) == dict(self.data).keys():
+    def validate_request(self) -> None:
+        if not self.has_required_data():
             raise exceptions.InvalidRequest(messages.INVALID_REQ)
 
-    def get_request_data(self):
-        data = dict(self.data)
-        values = [data.get(key) for key in self.required_key]   
-        return (*values,)
-
-    def process(self):
+    def process(self) -> None:
         self.validate_request()
         email, password = self.get_request_data()
         user = users.get_user_by_email(email)
