@@ -1,7 +1,7 @@
 import src.utils.authorizer as authorizer
 import src.utils.exceptions as exceptions
 import src.utils.messages as messages
-from src.services.handler import BaseService
+from src.services.base import BaseService
 from flask import Request
 
 

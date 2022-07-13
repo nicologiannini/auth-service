@@ -1,4 +1,4 @@
-from .handler import BaseService
+from .base import BaseService
 from .register import RegisterService
 from .login import LoginService
 from .session import SessionService

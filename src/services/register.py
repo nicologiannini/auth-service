@@ -2,7 +2,7 @@ import src.utils.authenticator as authenticator
 import src.utils.exceptions as exceptions
 import src.utils.messages as messages
 from src.entities.users import User
-from src.services.handler import BaseService
+from src.services.base import BaseService
 from flask import Request
 
 
