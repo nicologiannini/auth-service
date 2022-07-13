@@ -20,5 +20,5 @@ class Result:
         self.body["error"] = error
 
 
-def generate_uuid():
+def generate_uuid() -> str:
     return uuid.uuid4().hex
