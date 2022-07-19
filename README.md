@@ -3,6 +3,11 @@
 [![CircleCI](https://circleci.com/gh/nicologiannini/auth-service/tree/main.svg?style=svg)](https://circleci.com/gh/nicologiannini/auth-service/tree/main)
 
 A simple authentication system that supports registration, login and session.
+To run the project, build the .Dockerfile in the repository and then run the command
+
+```bash
+docker run --name [container_name]  -p 80:80  auth-service:latest
+```
 
 ## Endpoint
 ### /register/
